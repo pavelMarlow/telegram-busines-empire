@@ -340,4 +340,72 @@ class MusicPlayer {
         );
         
         // В реальном приложении здесь был бы запрос к API
-        alert(`Найдено ${filtered
+        alert(`Найдено ${filtered.length} треков по запросу "${query}"`);
+        this.sendTelegramData('search_performed', { query: query, results: filtered.length });
+    }
+
+    async addMusicFromUrl(url) {
+        // Здесь должна быть логика парсинга URL
+        // Для примера добавляем заглушку
+        const newTrack = {
+            title: `Трек из ${new URL(url).hostname}`,
+            artist: "Неизвестен",
+            duration: "0:00",
+            url: url,
+            image: "https://via.placeholder.com/300x300/4a5568/ffffff?text=New+Track"
+        };
+        
+        this.playlist.push(newTrack);
+        this.renderPlaylist();
+        this.elements.addModal.classList.remove('active');
+        
+        this.sendTelegramData('track_added', {
+            source: 'url',
+            url: url
+        });
+        
+        alert('Трек добавлен в плейлист!');
+    }
+
+    handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        if (!file.type.startsWith('audio/')) {
+            alert('Пожалуйста, выберите аудиофайл');
+            return;
+        }
+        
+        const url = URL.createObjectURL(file);
+        const newTrack = {
+            title: file.name.replace(/\.[^/.]+$/, ""),
+            artist: "Локальный файл",
+            duration: "0:00",
+            url: url,
+            image: "https://via.placeholder.com/300x300/4a5568/ffffff?text=Local+File"
+        };
+        
+        this.playlist.push(newTrack);
+        this.renderPlaylist();
+        this.elements.addModal.classList.remove('active');
+        
+        this.sendTelegramData('track_added', {
+            source: 'file',
+            filename: file.name,
+            size: file.size
+        });
+        
+        alert('Файл добавлен в плейлист!');
+    }
+
+    searchOnlineMusic(query) {
+        // Здесь должна быть интеграция с API музыкальных сервисов
+        alert(`Поиск онлайн музыки для: "${query}"\n\nВ реальном приложении здесь будет интеграция с YouTube, Spotify и другими сервисами.`);
+        this.sendTelegramData('online_search', { query: query });
+    }
+}
+
+// Инициализация плеера при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    window.musicPlayer = new MusicPlayer();
+});
