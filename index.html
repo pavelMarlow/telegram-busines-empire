@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI для продакта | Бизнес Игра</title>
+    <meta name="telegram:theme" content="dark light">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка с брендингом -->
+        <header class="header">
+            <div class="branding">
+                <span class="case-badge">Кейс от канала "AI для продакта"</span>
+                <button class="subscribe-btn" id="subscribeBtn">
+                    <i class="fab fa-telegram"></i> Подписаться на канал
+                </button>
+            </div>
+            <div class="player-info">
+                <div class="cash-display">
+                    <i class="fas fa-coins"></i>
+                    <span id="cash">$100</span>
+                </div>
+                <div class="net-worth">
+                    <i class="fas fa-chart-line"></i>
+                    <span id="netWorth">$100</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Кнопка тапа -->
+            <div class="tap-section">
+                <div class="tap-container">
+                    <button class="tap-button" id="tapButton">
+                        <i class="fas fa-hand-pointer"></i>
+                        <span class="tap-text">ТАПАЙ ЗА ДЕНЬГИ</span>
+                        <span class="tap-value">+$100 за тап</span>
+                    </button>
+                    <div class="tap-stats">
+                        <div class="stat">
+                            <span>Тапов/сек:</span>
+                            <strong id="tapsPerSecond">0</strong>
+                        </div>
+                        <div class="stat">
+                            <span>Всего тапов:</span>
+                            <strong id="totalTaps">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Навигация -->
+            <nav class="tab-navigation">
+                <button class="tab-btn active" data-tab="businesses">
+                    <i class="fas fa-building"></i> Бизнесы
+                </button>
+                <button class="tab-btn" data-tab="investments">
+                    <i class="fas fa-chart-bar"></i> Инвестиции
+                </button>
+                <button class="tab-btn" data-tab="properties">
+                    <i class="fas fa-home"></i> Недвижимость
+                </button>
+                <button class="tab-btn" data-tab="assets">
+                    <i class="fas fa-car"></i> Активы
+                </button>
+                <button class="tab-btn" data-tab="forbes">
+                    <i class="fas fa-trophy"></i> Forbes
+                </button>
+            </nav>
+
+            <!-- Контейнер для контента вкладок -->
+            <div class="tab-content" id="tabContent">
+                <!-- Контент будет загружаться динамически -->
+            </div>
+        </main>
+
+        <!-- Уведомления -->
+        <div class="notifications" id="notifications"></div>
+    </div>
+
+    <!-- Telegram Web App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
+
+Add game code
