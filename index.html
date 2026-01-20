@@ -7,6 +7,7 @@
     <meta name="telegram:theme" content="dark light">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div class="container">
@@ -15,7 +16,7 @@
             <div class="branding">
                 <span class="case-badge">Кейс от канала "AI для продакта"</span>
                 <button class="subscribe-btn" id="subscribeBtn">
-                    <i class="fab fa-telegram"></i> Подписаться на канал
+                    <i class="fab fa-telegram"></i> Подписаться
                 </button>
             </div>
             <div class="player-info">
@@ -26,6 +27,10 @@
                 <div class="net-worth">
                     <i class="fas fa-chart-line"></i>
                     <span id="netWorth">$100</span>
+                </div>
+                <div class="income-display">
+                    <i class="fas fa-clock"></i>
+                    <span id="hourlyIncome">$0/час</span>
                 </div>
             </div>
         </header>
@@ -42,12 +47,16 @@
                     </button>
                     <div class="tap-stats">
                         <div class="stat">
-                            <span>Тапов/сек:</span>
-                            <strong id="tapsPerSecond">0</strong>
-                        </div>
-                        <div class="stat">
                             <span>Всего тапов:</span>
                             <strong id="totalTaps">0</strong>
+                        </div>
+                        <div class="stat">
+                            <span>Тап-бонус:</span>
+                            <strong id="tapBonus">x1.0</strong>
+                        </div>
+                        <div class="stat">
+                            <span>Авто-тапы:</span>
+                            <strong id="autoTaps">0/сек</strong>
                         </div>
                     </div>
                 </div>
@@ -65,10 +74,13 @@
                     <i class="fas fa-home"></i> Недвижимость
                 </button>
                 <button class="tab-btn" data-tab="assets">
-                    <i class="fas fa-car"></i> Активы
+                    <i class="fas fa-gem"></i> Активы
                 </button>
                 <button class="tab-btn" data-tab="forbes">
                     <i class="fas fa-trophy"></i> Forbes
+                </button>
+                <button class="tab-btn" data-tab="upgrades">
+                    <i class="fas fa-cogs"></i> Улучшения
                 </button>
             </nav>
 
@@ -78,14 +90,28 @@
             </div>
         </main>
 
+        <!-- Кнопка сохранения -->
+        <div class="save-section">
+            <button class="save-btn" id="saveBtn">
+                <i class="fas fa-save"></i> Сохранить игру
+            </button>
+            <div class="last-save" id="lastSave">
+                Последнее сохранение: только что
+            </div>
+        </div>
+
         <!-- Уведомления -->
         <div class="notifications" id="notifications"></div>
+        
+        <!-- Загрузка игры -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <div class="loading-text">Загрузка игры...</div>
+            </div>
+        </div>
     </div>
 
-    <!-- Telegram Web App SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="script.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
-
-Add game code
