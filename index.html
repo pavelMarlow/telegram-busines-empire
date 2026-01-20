@@ -3,115 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI для продакта | Бизнес Игра</title>
-    <meta name="telegram:theme" content="dark light">
+    <title>🎵 Музыкальный плеер</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div class="container">
-        <!-- Шапка с брендингом -->
-        <header class="header">
-            <div class="branding">
-                <span class="case-badge">Кейс от канала "AI для продакта"</span>
-                <button class="subscribe-btn" id="subscribeBtn">
-                    <i class="fab fa-telegram"></i> Подписаться
-                </button>
-            </div>
-            <div class="player-info">
-                <div class="cash-display">
-                    <i class="fas fa-coins"></i>
-                    <span id="cash">$100</span>
-                </div>
-                <div class="net-worth">
-                    <i class="fas fa-chart-line"></i>
-                    <span id="netWorth">$100</span>
-                </div>
-                <div class="income-display">
-                    <i class="fas fa-clock"></i>
-                    <span id="hourlyIncome">$0/час</span>
-                </div>
-            </div>
+        <header>
+            <h1><i class="fas fa-music"></i> Музыкальный плеер</h1>
+            <div class="user-info" id="userInfo"></div>
         </header>
 
-        <!-- Основной контент -->
-        <main class="main-content">
-            <!-- Кнопка тапа -->
-            <div class="tap-section">
-                <div class="tap-container">
-                    <button class="tap-button" id="tapButton">
-                        <i class="fas fa-hand-pointer"></i>
-                        <span class="tap-text">ТАПАЙ ЗА ДЕНЬГИ</span>
-                        <span class="tap-value">+$100 за тап</span>
-                    </button>
-                    <div class="tap-stats">
-                        <div class="stat">
-                            <span>Всего тапов:</span>
-                            <strong id="totalTaps">0</strong>
+        <main>
+            <div class="player-container">
+                <div class="album-art">
+                    <img id="albumArt" src="https://via.placeholder.com/300x300/4a5568/ffffff?text=Album+Art" alt="Album Art">
+                    <div class="song-info">
+                        <h2 id="songTitle">Название трека</h2>
+                        <p id="artistName">Исполнитель</p>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                        <div class="time-info">
+                            <span id="currentTime">0:00</span>
+                            <span id="duration">0:00</span>
                         </div>
-                        <div class="stat">
-                            <span>Тап-бонус:</span>
-                            <strong id="tapBonus">x1.0</strong>
-                        </div>
-                        <div class="stat">
-                            <span>Авто-тапы:</span>
-                            <strong id="autoTaps">0/сек</strong>
-                        </div>
+                    </div>
+
+                    <div class="control-buttons">
+                        <button class="control-btn" id="prevBtn">
+                            <i class="fas fa-step-backward"></i>
+                        </button>
+                        <button class="control-btn play-btn" id="playBtn">
+                            <i class="fas fa-play" id="playIcon"></i>
+                        </button>
+                        <button class="control-btn" id="nextBtn">
+                            <i class="fas fa-step-forward"></i>
+                        </button>
+                        <button class="control-btn" id="volumeBtn">
+                            <i class="fas fa-volume-up" id="volumeIcon"></i>
+                        </button>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="50">
+                    </div>
+
+                    <div class="playback-controls">
+                        <button class="secondary-btn" id="repeatBtn">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button class="secondary-btn" id="shuffleBtn">
+                            <i class="fas fa-random"></i>
+                        </button>
+                        <button class="secondary-btn" id="playlistBtn">
+                            <i class="fas fa-list"></i> Плейлист
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Навигация -->
-            <nav class="tab-navigation">
-                <button class="tab-btn active" data-tab="businesses">
-                    <i class="fas fa-building"></i> Бизнесы
-                </button>
-                <button class="tab-btn" data-tab="investments">
-                    <i class="fas fa-chart-bar"></i> Инвестиции
-                </button>
-                <button class="tab-btn" data-tab="properties">
-                    <i class="fas fa-home"></i> Недвижимость
-                </button>
-                <button class="tab-btn" data-tab="assets">
-                    <i class="fas fa-gem"></i> Активы
-                </button>
-                <button class="tab-btn" data-tab="forbes">
-                    <i class="fas fa-trophy"></i> Forbes
-                </button>
-                <button class="tab-btn" data-tab="upgrades">
-                    <i class="fas fa-cogs"></i> Улучшения
-                </button>
-            </nav>
-
-            <!-- Контейнер для контента вкладок -->
-            <div class="tab-content" id="tabContent">
-                <!-- Контент будет загружаться динамически -->
+            <div class="playlist-container" id="playlistContainer">
+                <h3><i class="fas fa-list-music"></i> Плейлист</h3>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Поиск музыки...">
+                    <button id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <ul class="playlist" id="playlist">
+                    <!-- Плейлист будет загружаться здесь -->
+                </ul>
+                <div class="add-music">
+                    <button class="add-btn" id="addMusicBtn">
+                        <i class="fas fa-plus"></i> Добавить музыку
+                    </button>
+                    <input type="file" id="fileInput" accept=".mp3,.m4a,.ogg,.wav" style="display: none;">
+                </div>
             </div>
         </main>
 
-        <!-- Кнопка сохранения -->
-        <div class="save-section">
-            <button class="save-btn" id="saveBtn">
-                <i class="fas fa-save"></i> Сохранить игру
-            </button>
-            <div class="last-save" id="lastSave">
-                Последнее сохранение: только что
-            </div>
-        </div>
+        <footer>
+            <p>Музыкальный бот для Telegram • Используйте /help в боте для справки</p>
+        </footer>
+    </div>
 
-        <!-- Уведомления -->
-        <div class="notifications" id="notifications"></div>
-        
-        <!-- Загрузка игры -->
-        <div class="loading-overlay" id="loadingOverlay">
-            <div class="loading-content">
-                <div class="spinner"></div>
-                <div class="loading-text">Загрузка игры...</div>
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <h3>Добавить музыку</h3>
+            <div class="modal-options">
+                <button class="modal-option" id="addUrlBtn">
+                    <i class="fas fa-link"></i>
+                    <span>По ссылке</span>
+                </button>
+                <button class="modal-option" id="addFileBtn">
+                    <i class="fas fa-file-audio"></i>
+                    <span>Загрузить файл</span>
+                </button>
+                <button class="modal-option" id="addSearchBtn">
+                    <i class="fas fa-search"></i>
+                    <span>Найти онлайн</span>
+                </button>
             </div>
+            <button class="close-btn" id="closeModalBtn">Закрыть</button>
         </div>
     </div>
 
-    <script src="game.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
