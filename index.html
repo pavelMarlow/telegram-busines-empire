@@ -1,256 +1,218 @@
-<!-- index.html для Web App -->
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Сервис разблокировок</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: white;
-        }
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-        .header p {
-            opacity: 0.8;
-        }
-        .button {
-            display: block;
-            width: 100%;
-            padding: 18px 20px;
-            margin: 15px 0;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-            text-align: center;
-            text-decoration: none;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-        .button-icon {
-            margin-right: 10px;
-            font-size: 24px;
-        }
-        .back-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            color: white;
-            text-decoration: none;
-            margin-top: 20px;
-        }
-        .device-list {
-            display: grid;
-            gap: 10px;
-        }
-        .device-item {
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .price {
-            float: right;
-            font-weight: bold;
-            color: #4ade80;
-        }
-    </style>
+    <title>🔓 Сервис разблокировок | Web App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container" id="app">
-        <!-- Главное меню -->
-        <div id="main-menu">
-            <div class="header">
-                <h1>🔓 Сервис разблокировок</h1>
-                <p>Выберите нужную услугу</p>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1 class="app-title">🔓 Сервис разблокировок</h1>
+                <p class="app-subtitle">Безопасная разблокировка устройств</p>
             </div>
-            
-            <button class="button" onclick="showUnlockMenu()">
-                <span class="button-icon">📱</span> Купить разблокировку
-            </button>
-            
-            <button class="button" onclick="showKeyMenu()">
-                <span class="button-icon">🔑</span> Купить ключ доступа
-            </button>
-            
-            <a href="https://t.me/tech_support_chat" class="button">
-                <span class="button-icon">🆘</span> Поддержка
-            </a>
-        </div>
+            <div class="user-info" id="userInfo">
+                <!-- User info will be loaded here -->
+            </div>
+        </header>
 
-        <!-- Меню разблокировки -->
-        <div id="unlock-menu" style="display: none;">
-            <div class="header">
-                <h1>📱 Выбор устройства</h1>
-                <p>Выберите тип вашего устройства</p>
+        <!-- Main Content -->
+        <main class="app-main" id="mainContent">
+            <!-- Loading Screen -->
+            <div class="screen" id="loadingScreen">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Загрузка...</p>
             </div>
-            
-            <button class="button" onclick="showDeviceList('iphone')">
-                <span class="button-icon">📱</span> iPhone
-            </button>
-            
-            <button class="button" onclick="showDeviceList('ipad')">
-                <span class="button-icon">💻</span> iPad
-            </button>
-            
-            <button class="back-button" onclick="backToMain()">« Назад</button>
-        </div>
 
-        <!-- Список устройств -->
-        <div id="device-list" style="display: none;">
-            <div class="header">
-                <h1 id="device-list-title">Устройства</h1>
-                <p>Выберите модель</p>
+            <!-- Main Menu -->
+            <div class="screen hidden" id="mainMenu">
+                <div class="menu-grid">
+                    <button class="menu-btn large-btn" onclick="showUnlockMenu()">
+                        <span class="btn-icon">📱</span>
+                        <span class="btn-text">Купить разблокировку</span>
+                    </button>
+                    
+                    <button class="menu-btn large-btn" onclick="showKeyMenu()">
+                        <span class="btn-icon">🔑</span>
+                        <span class="btn-text">Купить ключ доступа</span>
+                    </button>
+                    
+                    <button class="menu-btn" onclick="openSupport()">
+                        <span class="btn-icon">🆘</span>
+                        <span class="btn-text">Поддержка</span>
+                    </button>
+                    
+                    <button class="menu-btn" onclick="showMyOrders()">
+                        <span class="btn-icon">📋</span>
+                        <span class="btn-text">Мои заказы</span>
+                    </button>
+                    
+                    <button class="menu-btn" onclick="showInfo()">
+                        <span class="btn-icon">ℹ️</span>
+                        <span class="btn-text">Информация</span>
+                    </button>
+                </div>
             </div>
-            
-            <div class="device-list" id="devices-container">
-                <!-- Устройства загружаются динамически -->
+
+            <!-- Unlock Menu -->
+            <div class="screen hidden" id="unlockMenu">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="backToMain()">← Назад</button>
+                    <h2>📱 Выбор устройства</h2>
+                </div>
+                
+                <div class="device-type-selector">
+                    <button class="device-type-btn" onclick="selectDeviceType('iphone')">
+                        <div class="device-icon">📱</div>
+                        <div class="device-name">iPhone</div>
+                    </button>
+                    
+                    <button class="device-type-btn" onclick="selectDeviceType('ipad')">
+                        <div class="device-icon">💻</div>
+                        <div class="device-name">iPad</div>
+                    </button>
+                </div>
+                
+                <div class="info-box">
+                    <p>Выберите тип устройства для разблокировки</p>
+                </div>
             </div>
-            
-            <button class="back-button" onclick="backToUnlockMenu()">« Назад</button>
-        </div>
+
+            <!-- Device List -->
+            <div class="screen hidden" id="deviceListScreen">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="backToUnlockMenu()">← Назад</button>
+                    <h2 id="deviceListTitle">Устройства</h2>
+                </div>
+                
+                <div class="device-list" id="deviceList">
+                    <!-- Devices will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Duration Selection -->
+            <div class="screen hidden" id="durationScreen">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="backToMain()">← Назад</button>
+                    <h2>⏳ Срок доступа</h2>
+                </div>
+                
+                <div class="duration-options">
+                    <div class="duration-option" onclick="selectDuration('1_day', 500)">
+                        <div class="duration-name">1 день</div>
+                        <div class="duration-price">500 ₽</div>
+                    </div>
+                    
+                    <div class="duration-option" onclick="selectDuration('week', 2500)">
+                        <div class="duration-name">Неделя</div>
+                        <div class="duration-price">2 500 ₽</div>
+                    </div>
+                    
+                    <div class="duration-option" onclick="selectDuration('month', 8000)">
+                        <div class="duration-name">Месяц</div>
+                        <div class="duration-price">8 000 ₽</div>
+                    </div>
+                    
+                    <div class="duration-option" onclick="selectDuration('year', 25000)">
+                        <div class="duration-name">Год</div>
+                        <div class="duration-price">25 000 ₽</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Screen -->
+            <div class="screen hidden" id="paymentScreen">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="backToPrevious()">← Назад</button>
+                    <h2>💳 Оплата</h2>
+                </div>
+                
+                <div class="order-summary" id="orderSummary">
+                    <!-- Order details will be shown here -->
+                </div>
+                
+                <div class="payment-methods">
+                    <div class="payment-method" onclick="selectPayment('sbp')">
+                        <div class="payment-icon">🏦</div>
+                        <div class="payment-name">СБП</div>
+                    </div>
+                    
+                    <div class="payment-method" onclick="selectPayment('yoomoney')">
+                        <div class="payment-icon">💳</div>
+                        <div class="payment-name">YooMoney</div>
+                    </div>
+                    
+                    <div class="payment-method" onclick="selectPayment('card')">
+                        <div class="payment-icon">💎</div>
+                        <div class="payment-name">Банковская карта</div>
+                    </div>
+                    
+                    <div class="payment-method" onclick="selectPayment('qiwi')">
+                        <div class="payment-icon">💰</div>
+                        <div class="payment-name">Qiwi</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Screen -->
+            <div class="screen hidden" id="successScreen">
+                <div class="success-icon">✅</div>
+                <h2 class="success-title">Оплата успешна!</h2>
+                <div class="success-message" id="successMessage">
+                    <!-- Success message will be shown here -->
+                </div>
+                <button class="primary-btn" onclick="backToMain()">Вернуться в меню</button>
+            </div>
+
+            <!-- Orders Screen -->
+            <div class="screen hidden" id="ordersScreen">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="backToMain()">← Назад</button>
+                    <h2>📋 Мои заказы</h2>
+                </div>
+                
+                <div class="orders-list" id="ordersList">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Info Screen -->
+            <div class="screen hidden" id="infoScreen">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="backToMain()">← Назад</button>
+                    <h2>ℹ️ Информация</h2>
+                </div>
+                
+                <div class="info-content">
+                    <h3>Как это работает?</h3>
+                    <p>1. Выберите услугу (разблокировка или ключ доступа)</p>
+                    <p>2. Выберите параметры (устройство или срок)</p>
+                    <p>3. Оплатите заказ удобным способом</p>
+                    <p>4. Получите ключ или ожидайте ответа поддержки</p>
+                    
+                    <h3>Время ответа</h3>
+                    <p>✅ Разблокировка: 10-50 минут после оплаты</p>
+                    <p>✅ Ключ доступа: мгновенно после оплаты</p>
+                    
+                    <h3>Поддержка</h3>
+                    <p>Техническая поддержка: @your_support_bot</p>
+                    <p>Время работы: 24/7</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-text">
+                <p>© 2024 Сервис разблокировок. Все права защищены.</p>
+            </div>
+        </footer>
     </div>
 
-    <script>
-        // Telegram Web App инициализация
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.MainButton.hide();
-        
-        // Текущее состояние
-        let currentState = 'main';
-        let selectedDeviceType = '';
-        
-        // Показать меню разблокировки
-        function showUnlockMenu() {
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('unlock-menu').style.display = 'block';
-            currentState = 'unlock';
-        }
-        
-        // Показать меню ключа
-        function showKeyMenu() {
-            // Здесь можно сразу переходить к выбору срока
-            // или показывать другую форму
-            tg.showAlert('Для покупки ключа используйте кнопки в чате с ботом');
-        }
-        
-        // Показать список устройств
-        function showDeviceList(type) {
-            selectedDeviceType = type;
-            const title = document.getElementById('device-list-title');
-            title.textContent = type === 'iphone' ? '📱 iPhone' : '💻 iPad';
-            
-            document.getElementById('unlock-menu').style.display = 'none';
-            document.getElementById('device-list').style.display = 'block';
-            currentState = 'device-list';
-            
-            // Загружаем устройства (в реальности через API)
-            loadDevices(type);
-        }
-        
-        // Загрузить устройства
-        function loadDevices(type) {
-            const container = document.getElementById('devices-container');
-            container.innerHTML = '';
-            
-            // Пример данных (в реальности через fetch к вашему API)
-            const devices = {
-                'iphone': [
-                    {model: 'iPhone 5', price: 3000},
-                    {model: 'iPhone 6', price: 4500},
-                    {model: 'iPhone 7', price: 6000},
-                    {model: 'iPhone 8', price: 7500},
-                    {model: 'iPhone X', price: 9000},
-                    {model: 'iPhone 11', price: 10500},
-                    {model: 'iPhone 12', price: 12000},
-                    {model: 'iPhone 13', price: 13500},
-                    {model: 'iPhone 14', price: 15000},
-                    {model: 'iPhone 15', price: 16500}
-                ],
-                'ipad': [
-                    {model: 'iPad Air 2', price: 5000},
-                    {model: 'iPad 6th Gen', price: 6500},
-                    {model: 'iPad Pro 11"', price: 12000},
-                    {model: 'iPad Mini 6', price: 8500}
-                ]
-            };
-            
-            devices[type].forEach((device, index) => {
-                // Увеличиваем цену на 1500 для каждой следующей модели
-                const finalPrice = device.price + (index * 1500);
-                
-                const div = document.createElement('div');
-                div.className = 'device-item';
-                div.innerHTML = `
-                    ${device.model}
-                    <span class="price">${finalPrice} ₽</span>
-                `;
-                div.onclick = () => selectDevice(device.model, finalPrice);
-                container.appendChild(div);
-            });
-        }
-        
-        // Выбрать устройство
-        function selectDevice(model, price) {
-            // Отправляем данные в бота
-            const data = {
-                action: 'select_device',
-                device: model,
-                price: price,
-                type: selectedDeviceType
-            };
-            
-            tg.sendData(JSON.stringify(data));
-            tg.close();
-        }
-        
-        // Навигация назад
-        function backToMain() {
-            document.getElementById('unlock-menu').style.display = 'none';
-            document.getElementById('device-list').style.display = 'none';
-            document.getElementById('main-menu').style.display = 'block';
-            currentState = 'main';
-        }
-        
-        function backToUnlockMenu() {
-            document.getElementById('device-list').style.display = 'none';
-            document.getElementById('unlock-menu').style.display = 'block';
-            currentState = 'unlock';
-        }
-        
-        // Обработка данных от бота
-        tg.onEvent('webAppDataReceived', (event) => {
-            console.log('Data received:', event);
-        });
-        
-        // Инициализация
-        tg.ready();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
