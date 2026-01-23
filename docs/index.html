@@ -1,0 +1,356 @@
+// ================== ТЕЛЕГРАМ WEB APP ИНИЦИАЛИЗАЦИЯ ==================
+const tg = window.Telegram.WebApp;
+const app = {
+    // Текущее состояние приложения
+    currentState: {},
+    navigationStack: [],
+    
+    // ================== ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ ==================
+    init: function() {
+        // Развертываем Web App на весь экран
+        tg.expand();
+        
+        // Устанавливаем цвета темы
+        const theme = tg.themeParams;
+        document.documentElement.style.setProperty('--bg-color', theme.bg_color || '#212121');
+        document.documentElement.style.setProperty('--text-color', theme.text_color || '#ffffff');
+        
+        // Загружаем информацию о пользователе
+        this.loadUserInfo();
+        
+        // Показываем главное меню после загрузки
+        setTimeout(() => {
+            this.showScreen('mainMenu');
+        }, 1000);
+        
+        // Настраиваем обработчики событий Telegram
+        this.setupTelegramEvents();
+    },
+    
+    // ================== ЗАГРУЗКА ИНФОРМАЦИИ О ПОЛЬЗОВАТЕЛЕ ==================
+    loadUserInfo: function() {
+        const user = tg.initDataUnsafe.user;
+        const userInfo = document.getElementById('userInfo');
+        
+        if (user) {
+            const userName = user.first_name || 'Пользователь';
+            userInfo.innerHTML = `
+                <div class="user-greeting">
+                    👋 Привет, ${userName}!
+                </div>
+            `;
+        } else {
+            userInfo.innerHTML = `
+                <div class="user-greeting">
+                    👋 Добро пожаловать!
+                </div>
+            `;
+        }
+    },
+    
+    // ================== НАСТРОЙКА СОБЫТИЙ TELEGRAM ==================
+    setupTelegramEvents: function() {
+        // Обработка изменения темы
+        tg.onEvent('themeChanged', () => {
+            const theme = tg.themeParams;
+            document.documentElement.style.setProperty('--bg-color', theme.bg_color || '#212121');
+            document.documentElement.style.setProperty('--text-color', theme.text_color || '#ffffff');
+        });
+        
+        // Обработка получения данных от бота
+        tg.onEvent('webAppDataReceived', (event) => {
+            console.log('Данные получены от бота:', event);
+        });
+    },
+    
+    // ================== УПРАВЛЕНИЕ ЭКРАНАМИ ==================
+    showScreen: function(screenId) {
+        // Скрываем все экраны
+        const screens = document.querySelectorAll('.screen');
+        screens.forEach(screen => {
+            if (screen.id !== 'loadingScreen') {
+                screen.classList.add('hidden');
+            }
+        });
+        
+        // Показываем целевой экран
+        const targetScreen = document.getElementById(screenId);
+        if (targetScreen) {
+            targetScreen.classList.remove('hidden');
+        }
+        
+        // Добавляем в стек навигации
+        if (screenId !== 'loadingScreen') {
+            this.navigationStack.push(screenId);
+        }
+    },
+    
+    backToPrevious: function() {
+        if (this.navigationStack.length > 1) {
+            this.navigationStack.pop(); // Убираем текущий экран
+            const previousScreen = this.navigationStack[this.navigationStack.length - 1];
+            this.showScreen(previousScreen);
+        } else {
+            this.backToMain();
+        }
+    },
+    
+    backToMain: function() {
+        this.navigationStack = ['mainMenu'];
+        this.showScreen('mainMenu');
+    },
+    
+    // ================== ГЛАВНОЕ МЕНЮ ==================
+    showUnlockMenu: function() {
+        this.currentState.orderType = 'unlock';
+        this.showScreen('unlockMenu');
+    },
+    
+    showKeyMenu: function() {
+        this.currentState.orderType = 'access_key';
+        this.showScreen('durationScreen');
+    },
+    
+    openSupport: function() {
+        tg.openTelegramLink('https://t.me/your_support_bot');
+    },
+    
+    showMyOrders: function() {
+        // В реальном приложении здесь будет загрузка заказов с сервера
+        // Для демо показываем статические заказы
+        const ordersList = document.getElementById('ordersList');
+        ordersList.innerHTML = `
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-id">Заказ #1001</div>
+                    <div class="order-status status-paid">Оплачен</div>
+                </div>
+                <div class="order-details">
+                    <div>🔓 Разблокировка iPhone 14</div>
+                    <div>Сумма: 15 000 ₽</div>
+                    <div>Дата: 25.12.2023</div>
+                </div>
+            </div>
+            
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-id">Заказ #1002</div>
+                    <div class="order-status status-paid">Оплачен</div>
+                </div>
+                <div class="order-details">
+                    <div>🔑 Ключ доступа (Месяц)</div>
+                    <div>Сумма: 8 000 ₽</div>
+                    <div>Дата: 20.12.2023</div>
+                    <div class="order-key">XXXX-XXXX-XXXX-XXXX</div>
+                </div>
+            </div>
+            
+            <div class="order-card">
+                <div class="order-header">
+                    <div class="order-id">Заказ #1003</div>
+                    <div class="order-status status-pending">В обработке</div>
+                </div>
+                <div class="order-details">
+                    <div>🔓 Разблокировка iPad Pro</div>
+                    <div>Сумма: 20 000 ₽</div>
+                    <div>Дата: 26.12.2023</div>
+                </div>
+            </div>
+        `;
+        this.showScreen('ordersScreen');
+    },
+    
+    showInfo: function() {
+        this.showScreen('infoScreen');
+    },
+    
+    // ================== ВЫБОР УСТРОЙСТВА ==================
+    selectDeviceType: function(deviceType) {
+        this.currentState.deviceType = deviceType;
+        
+        // Обновляем заголовок
+        const title = document.getElementById('deviceListTitle');
+        title.textContent = deviceType === 'iphone' ? '📱 iPhone' : '💻 iPad';
+        
+        // Загружаем устройства
+        this.loadDevices(deviceType);
+        this.showScreen('deviceListScreen');
+    },
+    
+    loadDevices: function(deviceType) {
+        const deviceList = document.getElementById('deviceList');
+        deviceList.innerHTML = '';
+        
+        // Демо устройства - в реальном приложении загружаются с сервера
+        let devices = [];
+        
+        if (deviceType === 'iphone') {
+            devices = [
+                { id: 1, model: 'iPhone 5', basePrice: 3000 },
+                { id: 2, model: 'iPhone 6', basePrice: 4500 },
+                { id: 3, model: 'iPhone 7', basePrice: 6000 },
+                { id: 4, model: 'iPhone 8', basePrice: 7500 },
+                { id: 5, model: 'iPhone X', basePrice: 9000 },
+                { id: 6, model: 'iPhone 11', basePrice: 10500 },
+                { id: 7, model: 'iPhone 12', basePrice: 12000 },
+                { id: 8, model: 'iPhone 13', basePrice: 13500 },
+                { id: 9, model: 'iPhone 14', basePrice: 15000 },
+                { id: 10, model: 'iPhone 15', basePrice: 16500 }
+            ];
+        } else {
+            devices = [
+                { id: 11, model: 'iPad Air 2', basePrice: 5000 },
+                { id: 12, model: 'iPad 6th Gen', basePrice: 6500 },
+                { id: 13, model: 'iPad 7th Gen', basePrice: 8000 },
+                { id: 14, model: 'iPad 8th Gen', basePrice: 9500 },
+                { id: 15, model: 'iPad 9th Gen', basePrice: 11000 },
+                { id: 16, model: 'iPad 10th Gen', basePrice: 12500 }
+            ];
+        }
+        
+        // Отображаем устройства с увеличивающейся ценой
+        devices.forEach((device, index) => {
+            const price = device.basePrice + (index * 1500);
+            const deviceElement = document.createElement('div');
+            deviceElement.className = 'device-item';
+            deviceElement.innerHTML = `
+                <div class="device-name">${device.model}</div>
+                <div class="device-price">${price.toLocaleString()} ₽</div>
+            `;
+            deviceElement.onclick = () => this.selectDevice(device.model, price, device.id);
+            deviceList.appendChild(deviceElement);
+        });
+    },
+    
+    selectDevice: function(model, price, deviceId) {
+        this.currentState.deviceModel = model;
+        this.currentState.deviceId = deviceId;
+        this.currentState.amount = price;
+        
+        // Показываем сводку заказа
+        this.showOrderSummary();
+        this.showScreen('paymentScreen');
+    },
+    
+    backToUnlockMenu: function() {
+        this.showScreen('unlockMenu');
+    },
+    
+    // ================== ВЫБОР ДЛИТЕЛЬНОСТИ ==================
+    selectDuration: function(duration, price) {
+        this.currentState.duration = duration;
+        this.currentState.amount = price;
+        
+        // Показываем сводку заказа
+        this.showOrderSummary();
+        this.showScreen('paymentScreen');
+    },
+    
+    // ================== СВОДКА ЗАКАЗА ==================
+    showOrderSummary: function() {
+        const orderSummary = document.getElementById('orderSummary');
+        
+        if (this.currentState.orderType === 'unlock') {
+            orderSummary.innerHTML = `
+                <h3>Детали заказа:</h3>
+                <div class="order-detail">
+                    <span>Услуга:</span>
+                    <span>🔓 Разблокировка</span>
+                </div>
+                <div class="order-detail">
+                    <span>Устройство:</span>
+                    <span>${this.currentState.deviceModel}</span>
+                </div>
+                <div class="order-detail">
+                    <span>Стоимость:</span>
+                    <span>${this.currentState.amount.toLocaleString()} ₽</span>
+                </div>
+                <div class="order-total">
+                    Итого: ${this.currentState.amount.toLocaleString()} ₽
+                </div>
+            `;
+        } else {
+            const durationText = this.currentState.duration.replace('_', ' ');
+            orderSummary.innerHTML = `
+                <h3>Детали заказа:</h3>
+                <div class="order-detail">
+                    <span>Услуга:</span>
+                    <span>🔑 Ключ доступа</span>
+                </div>
+                <div class="order-detail">
+                    <span>Срок:</span>
+                    <span>${durationText}</span>
+                </div>
+                <div class="order-detail">
+                    <span>Стоимость:</span>
+                    <span>${this.currentState.amount.toLocaleString()} ₽</span>
+                </div>
+                <div class="order-total">
+                    Итого: ${this.currentState.amount.toLocaleString()} ₽
+                </div>
+            `;
+        }
+    },
+    
+    // ================== ВЫБОР ОПЛАТЫ ==================
+    selectPayment: function(paymentMethod) {
+        this.currentState.paymentMethod = paymentMethod;
+        
+        // В реальном приложении здесь отправка данных боту и обработка платежа
+        // Для демо имитируем успешный платеж
+        this.simulatePayment();
+    },
+    
+    simulatePayment: function() {
+        // Показываем загрузку
+        const successMessage = document.getElementById('successMessage');
+        
+        if (this.currentState.orderType === 'unlock') {
+            successMessage.innerHTML = `
+                ✅ <strong>Оплата прошла успешно!</strong><br><br>
+                👨‍💻 Техподдержка скоро вам ответит.<br>
+                ⏱ Ответ в течение 10-50 минут.<br><br>
+                Номер заказа: #${Math.floor(1000 + Math.random() * 9000)}
+            `;
+        } else {
+            // Генерируем демо ключ доступа
+            const accessKey = this.generateAccessKey();
+            successMessage.innerHTML = `
+                ✅ <strong>Оплата прошла успешно!</strong><br><br>
+                Ваш ключ доступа:<br>
+                <strong>${accessKey}</strong><br><br>
+                ⚠️ Сохраните этот ключ в надежном месте!<br>
+                Он больше не будет показан.
+            `;
+        }
+        
+        this.showScreen('successScreen');
+    },
+    
+    generateAccessKey: function() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let key = '';
+        
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            if (i < 3) key += '-';
+        }
+        
+        return key;
+    },
+    
+    // ================== ОТПРАВКА ДАННЫХ БОТУ ==================
+    sendDataToBot: function(data) {
+        tg.sendData(JSON.stringify(data));
+    }
+};
+
+// ================== ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ ==================
+document.addEventListener('DOMContentLoaded', function() {
+    app.init();
+});
+
+// ================== TELEGRAM WEB APP READY ==================
+tg.ready();
